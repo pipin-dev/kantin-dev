@@ -1,8 +1,10 @@
 Kantin Spring Boot — REST API CRUD
 
-Template proyek Java Spring Boot sederhana untuk REST API CRUD data produk kantin. Menggunakan Spring Boot, JPA, dan PostgreSQL. Termasuk instruksi lengkap pembuatan database, Docker Compose, struktur project, dan cara menjalankan aplikasi.
+Template proyek Java Spring Boot sederhana untuk REST API CRUD data produk kantin.
+Menggunakan Spring Boot, Spring Data JPA, dan PostgreSQL.
+Termasuk instruksi lengkap pembuatan database (manual & Docker), struktur project, dan cara menjalankan aplikasi.
 
-Fitur:
+✨ Fitur
 
 CRUD Produk (nama, deskripsi, harga, status)
 
@@ -12,20 +14,28 @@ PostgreSQL (manual atau Docker)
 
 SQL skrip pembuatan database
 
-Hibernate auto update schema
+Hibernate auto-update schema
 
-Struktur Project
+Siap deploy & dikembangkan
 
+📁 Struktur Project (Ringkas)
 kantin-springboot/
-README.md
-pom.xml
-docker-compose.yml
-sql/create_kantin_db.sql
-src/main/java/com/example/kantin/...
-src/main/resources/application.properties
-.gitignore
+ ├── README.md
+ ├── pom.xml
+ ├── docker-compose.yml
+ ├── sql/
+ │    └── create_kantin_db.sql
+ ├── src/main/java/com/example/kantin/
+ │    ├── controller/
+ │    ├── dto/
+ │    ├── exception/
+ │    ├── model/
+ │    ├── repository/
+ │    └── service/
+ └── src/main/resources/
+      └── application.properties
 
-Prasyarat
+📌 Prasyarat
 
 Java 17
 
@@ -33,133 +43,96 @@ Maven 3.8+
 
 PostgreSQL 12+ atau Docker
 
-Git (opsional)
+IDE (IntelliJ / VSCode / Eclipse)
 
-=========================================
-A. SETUP DATABASE MENGGUNAKAN DOCKER
+🛢️ Cara Membuat Database PostgreSQL
+1️⃣ Cara Manual (Tanpa Docker)
 
-Isi file docker-compose.yml:
+Login ke PostgreSQL:
 
-version: "3.8"
-services:
-db:
-image: postgres:15
-environment:
-POSTGRES_DB: kantin
-POSTGRES_USER: kantin_user
-POSTGRES_PASSWORD: your_password_here
-ports:
-- "5432:5432"
-volumes:
-- kantin-db-data:/var/lib/postgresql/data
+psql -U postgres
 
-volumes:
-kantin-db-data:
+
+Lalu jalankan:
+
+CREATE DATABASE kantin_db;
+CREATE USER kantin_user WITH ENCRYPTED PASSWORD 'kantin123';
+GRANT ALL PRIVILEGES ON DATABASE kantin_db TO kantin_user;
+
+2️⃣ Cara Otomatis Menggunakan Docker Compose
 
 Jalankan:
 
-docker compose up -d
+docker-compose up -d
 
-Database siap dengan:
-Host: localhost
+
+Akan membuat:
+
+Database: kantin_db
+
+Username: kantin_user
+
+Password: kantin123
+
 Port: 5432
-User: kantin_user
-Password: your_password_here
-DB: kantin
 
-=========================================
-B. SETUP DATABASE MANUAL TANPA DOCKER
-
-Gunakan SQL berikut:
-
-CREATE USER kantin_user WITH PASSWORD 'your_password_here';
-CREATE DATABASE kantin OWNER kantin_user;
-\c kantin;
-
-CREATE TABLE product (
-id BIGSERIAL PRIMARY KEY,
-name VARCHAR(255) NOT NULL,
-description TEXT,
-price NUMERIC(12,2) NOT NULL DEFAULT 0,
-available BOOLEAN NOT NULL DEFAULT true,
-created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
-);
-
-INSERT INTO product (name, description, price, available) VALUES
-('Nasi Goreng', 'Nasi goreng special', 15000.00, true),
-('Teh Manis', 'Teh manis hangat', 5000.00, true);
-
-=========================================
-KONFIGURASI APLIKASI (application.properties)
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/kantin
+⚙️ Konfigurasi application.properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/kantin_db
 spring.datasource.username=kantin_user
-spring.datasource.password=your_password_here
+spring.datasource.password=kantin123
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.show-sql=true
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-server.port=8080
+spring.jpa.properties.hibernate.format_sql=true
 
-Jika pakai Docker, host bisa diganti:
-spring.datasource.url=jdbc:postgresql://db:5432/kantin
+▶️ Cara Menjalankan Project
+1. Build
+mvn clean install
 
-=========================================
-MENJALANKAN APLIKASI
+2. Jalankan
+mvn spring-boot:run
 
-Build aplikasi:
-
-mvn clean package -DskipTests
-
-Jalankan:
-
-java -jar target/kantin-0.0.1-SNAPSHOT.jar
 
 Aplikasi berjalan di:
+
 http://localhost:8080
 
-=========================================
-ENDPOINT API
+📚 Endpoint API
+GET Semua Produk
+GET /api/products
 
-GET /api/products → list produk
-GET /api/products/{id} → detail produk
-POST /api/products → tambah produk
-PUT /api/products/{id} → update produk
-DELETE /api/products/{id} → hapus produk
+GET Produk berdasarkan ID
+GET /api/products/{id}
 
-=========================================
-CONTOH CURL
+POST Tambah Produk
+POST /api/products
+Content-Type: application/json
 
-Tambah produk:
 
-curl -X POST http://localhost:8080/api/products
- -H "Content-Type: application/json" -d "{
-"id": null,
-"name": "Es Jeruk",
-"description": "Segar banget",
-"price": 8000.00,
-"available": true
-}"
+Example body:
 
-List produk:
+{
+  "name": "Nasi Goreng",
+  "description": "Pedas",
+  "price": 15000,
+  "active": true
+}
 
-curl http://localhost:8080/api/products
+PUT Update Produk
+PUT /api/products/{id}
 
-=========================================
-PENGEMBANGAN LANJUTAN
+DELETE Produk
+DELETE /api/products/{id}
 
-Pagination & sorting
+📝 SQL File Lokasi
+/sql/create_kantin_db.sql
 
-Validasi DTO (@Valid)
 
-Swagger/OpenAPI
+Isi file:
 
-JWT Authentication
-
-Modul transaksi
-
-Unit test
-
-=========================================
-SELESAI
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price NUMERIC(12,2) NOT NULL,
+    active BOOLEAN DEFAULT TRUE
+);
