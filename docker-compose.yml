@@ -1,2 +1,16 @@
-version: '3.8'
-services: {}
+version: "3.8"
+services:
+db:
+image: postgres:15
+environment:
+POSTGRES_DB: kantin
+POSTGRES_USER: kantin_user
+POSTGRES_PASSWORD: your_password_here
+ports:
+- "5432:5432"
+volumes:
+- kantin-db-data:/var/lib/postgresql/data
+
+
+volumes:
+kantin-db-data:
