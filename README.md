@@ -1,101 +1,48 @@
-Kantin REST API
+# Project Title
 
-Simple Spring Boot REST API to manage canteen product CRUD operations.
+Short description of what this project does and who it is for.
 
-Tech stack
+---
 
-Java 17
+## Tech Stack
 
-Spring Boot 3.2.x
+- Java 17
+- Spring Boot (3.x)
+- Spring Data JPA (Hibernate)
+- PostgreSQL
+- Lombok
+- OpenAPI / Swagger (springdoc)
 
-Spring Data JPA (Hibernate)
+---
 
-PostgreSQL (local or Docker)
+## Setup (Quick Start)
 
-Lombok
+### Option A — Run with Local PostgreSQL
 
-OpenAPI / Swagger (springdoc-openapi)
-
-Setup (Quick Guide)
-Option A — Run with local PostgreSQL
-
-Create database:
-
-CREATE DATABASE kantin_db;
-
-CREATE USER kantin_user WITH ENCRYPTED PASSWORD 'kantin123';
-
-GRANT ALL PRIVILEGES ON DATABASE kantin_db TO kantin_user;
-
-
-Make sure PostgreSQL is running and accessible at localhost:5432.
-
-Update application.properties if needed:
-
-File: src/main/resources/application.properties
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/kantin_db
-spring.datasource.username=kantin_user
-spring.datasource.password=kantin123
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-
-
-Run the application:
-
+1. Create database:
+```sql
+CREATE DATABASE hospitaldb;
+-- Make sure PostgreSQL is running and accessible at localhost:5432
+```
+2. Update `src/main/resources/application.properties` if needed (currently uses `postgre` / `admin`).
+3. Run:
+```bash
 mvn spring-boot:run
+```
+Open Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 
-
-Open Swagger UI:
-
-http://localhost:8080/swagger-ui/index.html
-
-Option B — Run with Docker Compose
-
-Start PostgreSQL:
-
-docker-compose up -d
-
-
-Database details:
-
-Database: kantin_db
-
-User: kantin_user
-
-Password: kantin123
-
-Port: 5432
-
-Spring Boot will automatically connect using application.properties.
-
-API Endpoints
-Method	Endpoint	Description
-GET	/api/products	Get all products
-GET	/api/products/{id}	Get product by ID
-POST	/api/products	Create new product
-PUT	/api/products/{id}	Update product
-DELETE	/api/products/{id}	Delete product
-Example JSON (POST)
-{
-  "name": "Nasi Goreng",
-  "description": "Pedas",
-  "price": 15000,
-  "active": true
-}
-
-Project Structure
-src/main/java/com/example/kantin/
- ├── controller/
- ├── service/
- ├── repository/
- ├── model/
- └── dto/
-
-src/main/resources/
- └── application.properties
-
-sql/
- └── create_kantin_db.sql
+### Option B — run with Docker Compose (recommended)
+If you have Docker, a `docker-compose.yml` is included. Run:
+```bash
+docker compose up -d
+# wait a few seconds for Postgres to be ready
+mvn spring-boot:run
+```
+## Endpoints (summary)
+| Method | Endpoint            | Description     |
+| ------ | ------------------- | --------------- |
+| GET    | /api/resources      | Get all items   |
+| GET    | /api/resources/{id} | Get item by ID  |
+| POST   | /api/resources      | Create new item |
+| PUT    | /api/resources/{id} | Update item     |
+| DELETE | /api/resources/{id} | Delete item     |
